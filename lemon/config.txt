@@ -1,0 +1,244 @@
+name = 'Naruto (Medium)'
+title = 'Naruto (Medium)'
+user = 'naruto'
+os = 'Windows 10'
+version = '2.1.1'
+
+remote = 'https://solarify.cc'
+password = 'CyberPatriots2024!'
+
+[[check]]
+message = "Forensics Question 1 correct"
+points = 5
+	[[check.pass]]
+	type = "FileContainsRegex"
+	path = 'C:\Users\naruto\Desktop\Forensic Question #1.txt'
+	value = '^ANSWER:\sS-1-5-21-2997923603-1377549775-1057621302-1002$'
+
+[[check]]
+message = "Forensics Question 2 correct"
+points = 5
+	[[check.pass]]
+	type = "FileContainsRegex"
+	path = 'C:\Users\naruto\Desktop\Forensic Question #2.txt'
+	value = '^ANSWER:\sBypass$'
+
+[[check]]
+message = "Forensics Question 3 correct"
+points = 5
+	[[check.pass]]
+	type = "FileContainsRegex"
+	path = 'C:\Users\naruto\Desktop\Forensic Question #3.txt'
+	value = '^ANSWER:\stbh\ssakura\scan\sget\sit$'
+
+[[check]]
+message = "Forensics Question 4 correct (and backdoor deleted)"
+points = 5
+	[[check.pass]]
+	type = "FileContainsRegex"
+	path = 'C:\Users\naruto\Desktop\Forensic Question #4.txt'
+	value = '^ANSWER:\s2365$'
+
+	[[check.pass]]
+	type = "PathExistsNot"
+	path = 'C:\Program Files (x86)\Microsoft.NET\RedistList\netdog.exe'
+
+[[check]]
+message = "Forensics Question 5 correct"
+points = 5
+	[[check.pass]]
+	type = "FileContainsRegex"
+	path = 'C:\Users\naruto\Desktop\Forensic Question #5.txt'
+	value = '^ANSWER:\sMadara\sUchiha$'
+
+
+[[check]]
+message = "Removed unauthorized user orochimaru"
+points = 3
+    [[check.pass]]
+    type = 'UserExistsNot'
+    user = 'orochimaru'
+
+[[check]]
+message = "User kakashi is an administrator"
+points = 3
+	[[check.pass]]
+	type = "UserInGroup"
+	user = "kakashi"
+	group = "Administrators"
+
+[[check]]
+message = "User sai may not manage auditing and security log"
+points = 3
+	[[check.pass]]
+	type = 'UserRightsNot'
+	name = 'sai'
+	value = 'SeSecurityPrivilege'
+
+[[check]]
+message = "Real-time protection is turned on"
+points = 4
+	[[check.pass]]
+	type = 'CommandContainsNot'
+	cmd = 'Get-MpPreference | select DisableRealtimeMonitoring'
+	value = 'True'
+
+[[check]]
+message = "Removed malicious .exe exclusion in Windows Defender"
+points = 4
+	[[check.pass]]
+	type = 'CommandContainsNot'
+	cmd = 'Get-MpPreference | Select-Object -Property ExclusionExtension'
+	value = '.exe'
+
+[[check]]
+message = 'FileZilla server automatically checks for updates'
+points = 3
+	[[check.pass]]
+	type = 'FileContainsNot'
+	path = 'C:\ProgramData\filezilla-server\settings.xml'
+	value = '<frequency>0</frequency>'
+
+[[check]]
+message = 'FileZilla Server service is running'
+points = 2
+	[[check.pass]]
+	type = 'ServiceUp'
+	name = 'filezilla-server'
+	
+[[check]]
+message = 'FileZilla requires explicit FTP over TLS'
+points = 3
+	[[check.pass]]
+	type = 'FileContains'
+	path = 'C:\ProgramData\filezilla-server\settings.xml'
+	value = '<tls_mode>2</tls_mode>'
+	
+[[check]]
+message = 'Updated FileZila Server'
+points = 2
+	[[check.pass]]
+	type = 'ProgramVersionNot'
+	name = 'FileZilla Server'
+	value = '1.7.2'
+
+[[check]]
+message = "Enabled process memory integrity"
+points = 3
+	[[check.pass]]
+	type = 'RegistryKey'
+	key = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity\Enabled'
+	value = '1'
+
+[[check]]
+message = "User Account Control is set to maximum level"
+points = 5
+	[[check.pass]]
+	type = "RegistryKey"
+	key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\PromptOnSecureDesktop'
+	value = "1"
+
+	[[check.pass]]
+	type = "RegistryKey"
+	key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\ConsentPromptBehaviorAdmin'
+	value = "2"
+	
+[[check]]
+message = "A secure maximum password age is configured"
+points = 3
+    [[check.pass]]
+    type = 'SecurityPolicy'
+    key = 'MaximumPasswordAge'
+    value = '40-100'
+	
+[[check]]
+message = "Built in Administrator account is disabled"
+points = 2
+	[[check.pass]]
+	type = 'SecurityPolicy'
+	key = 'EnableAdminAccount'
+	value = '0'
+
+[[check]]
+message = "Built in Guest account is disabled"
+points = 2
+	[[check.pass]]
+	type = 'SecurityPolicy'
+	key = 'EnableGuestAccount'
+	value = '0'
+
+[[check]]
+message = "System crashes when audits fail"
+points = 3
+	[[check.pass]]
+	type = 'SecurityPolicy'
+	key = 'CrashOnAuditFail'
+	value = '1'
+
+[[check]]
+message = "Removed and changed user kakashi's leaked password"
+points = 3
+	[[check.pass]]
+	type = 'PasswordChanged'
+	user = 'kakashi'
+	after = 'Monday, January 31, 2025 10:27:00 AM'
+
+	[[check.pass]]
+	type = 'CommandContainsNot'
+	cmd = 'net user kakashi'
+	value = 'The password is: c0pyc@t'
+
+[[check]]
+message = "User tsunade's password set to expire"
+points = 3
+	[[check.pass]]
+	type = 'UserDetail'
+	user = 'tsunade'
+	key = 'PasswordNeverExpires'
+	value = 'No'
+
+[[check]]
+message = "System firewall is up"
+points = 4
+	[[check.pass]]
+	type = 'FirewallUp'
+
+[[check]]
+message = "Sysmon is configured"
+points = 6
+	[[check.pass]]
+	type = "ServiceUp"
+	name = "Sysmon64"
+
+[[check]]
+message = 'Firefox has been updated'
+points = 4
+	[[check.pass]]
+	type = "ProgramVersionNot"
+	name = "Firefox"
+	value = "131.0"
+		
+[[check]]
+message = 'Removed Google Chrome'
+points = 3
+	[[check.pass]]
+	type = 'PathExistsNot'
+	path = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+
+[[check]]
+message = 'Removed malicious script xy.bat'
+points = 4
+	[[check.pass]]
+	type = 'PathExistsNot'
+	path = 'C:\Program Files (x86)\Windows Portable Devices\xy.bat'
+
+[[check]]
+message = 'Removed Discord'
+points = 3
+	[[check.passoverride]]
+	type = 'PathExistsNot'
+	path = 'C:\Users\naruto\AppData\Local\Discord\packages'
+
+	[[check.pass]]
+	type = 'PathExists'
+	path = 'C:\Users\naruto\AppData\Local\Discord\.dead'
