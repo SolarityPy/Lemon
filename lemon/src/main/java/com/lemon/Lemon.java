@@ -71,15 +71,16 @@ public class Lemon {
         return -1;
     }
     
+    // Used GitHub Copilot
     public void removeLinesBetween(String filePath, int startLine, int endLine) {
         try {
-            Path path = Paths.get(filePath);
-            List<String> lines = Files.readAllLines(path);
+            Path path = Paths.get(filePath); // Initilizes a new Path obj/file handle
+            List<String> lines = Files.readAllLines(path); // Reads lines and returns List of String
 
             if (startLine > 0 && endLine <= lines.size() && startLine < endLine) {
-                lines.subList(startLine - 1, endLine - 1).clear();
+                lines.subList(startLine - 1, endLine - 1).clear(); // equivalent of substring for lists
             }
-            Files.write(path, lines);
+            Files.write(path, lines); // writes to file handle
         } catch (IOException e) {
             System.out.println(e);
         }

@@ -1,29 +1,28 @@
 package com.lemon;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-public class Main {
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+public class Main extends Application {
+    @Override
+    public void start(Stage primaryStage) {
+        Button createButton = new Button("Create New Config");
+        Button openButton = new Button("Open Existing Config");
+
+        VBox vbox = new VBox(10); // 10px spacing between buttons
+        vbox.getChildren().addAll(createButton, openButton);
+
+        Scene sc = new Scene(vbox, 200, 200);
+
+        primaryStage.setScene(sc);
+        primaryStage.setTitle("Lemon");
+        primaryStage.show();
+    }
+
     public static void main(String[] args) {
-        Lemon lemon = new Lemon("Invincible (Hard)", "Windows 10", "cstedman", "https://solarify.cc", "CyberPatriots2024!");
-        ArrayList<Map<String, String>> checks = new ArrayList<>();
-        ArrayList<Map<String, String>> checks2 = new ArrayList<>();
-        
-        Map<String, String> check1 = new HashMap();
-        check1.put("type", "UserExistsNot");
-        check1.put("name", "cstedman");
-
-        Map<String, String> check2 = new HashMap();
-        check2.put("type", "RegistryKey");
-        check2.put("name", "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon");
-        check2.put("value", "1");
-        
-        checks.add(check1);
-        checks2.add(check2);
-        
-        lemon.addCheck("sup", 4, checks);
-        lemon.addCheck("secondCheck", 2, checks2);
-
-        lemon.removeCheck("sup");
+        launch(args);
     }
 }
