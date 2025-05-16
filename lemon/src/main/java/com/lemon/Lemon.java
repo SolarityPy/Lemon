@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,10 +17,11 @@ public class Lemon {
     private Map<String, String> attributes;
 
     public Lemon(String title, String os, String user, String remote, String password) {
-        attributes = new HashMap();
+        attributes = new LinkedHashMap<>();
+        attributes.put("name", title);
         attributes.put("title", title);
-        attributes.put("os", os);
         attributes.put("user", user);
+        attributes.put("os", os);
         attributes.put("remote", remote);
         attributes.put("password", password);
 
