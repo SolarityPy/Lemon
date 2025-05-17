@@ -104,20 +104,27 @@ public class Checks {
         for (String type : checksMap.keySet()) {
             checkTypes.getItems().add(type);
         }
+
+        VBox paramsBox = new VBox();
+
         EventHandler<ActionEvent> dropTypesEvent = new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e)
-            {
-                for (String poramValue : checksMap.get(checkTypes.getValue())) {
+        public void handle(ActionEvent e) {
+            paramsBox.getChildren().clear();
+            String[] params = checksMap.get(checkTypes.getValue());
+            if (params != null) {
+                for (String poramValue : params) {
                     Label poram = new Label(poramValue + ":");
                     TextField poramField = new TextField();
                     HBox hbporam = new HBox();
                     hbporam.getChildren().addAll(poram, poramField);
                     hbporam.setSpacing(10);
-                    box.getChildren().add(hbporam);
+                    paramsBox.getChildren().add(hbporam);
                 }
             }
-        };
-        checkTypes.setOnAction(dropTypesEvent);
-        box.getChildren().addAll(checkKind, checkTypes);
+        }
+    };
+    checkTypes.setOnAction(dropTypesEvent);
+    VBox checkContainer = new VBox(checkKind, checkTypes, paramsBox);
+    box.getChildren().add(checkContainer);
     }
 }
