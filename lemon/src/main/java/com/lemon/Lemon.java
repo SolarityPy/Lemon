@@ -102,4 +102,8 @@ public class Lemon {
         return result;
     }
 
+    public String getOs() {
+        return attributes.get("os");
+    }
+
 }
