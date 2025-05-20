@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.text.Text;
 import javafx.scene.control.Label;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -28,7 +29,8 @@ public class Checks {
     private ComboBox<String> checkKind;
     private ComboBox<String> checkTypes;
 
-    private ArrayList<Check> checks;
+    private ArrayList<Check> checks = new ArrayList<>();
+    private ArrayList<ArrayList<Check>> allChecks = new ArrayList<>();
 
     public Checks(Lemon lemonObj, Stage stage) {
         this.lemonObj = lemonObj;
@@ -37,16 +39,20 @@ public class Checks {
 
 
     public void handle() {
-        checks = new ArrayList<>();
         Button addVuln = new Button("Add Vulnerability");
-        VBox root = new VBox(addVuln);
+        VBox vuln = new VBox(addVuln);
+        VBox displayBox = new VBox();
+        HBox root = new HBox(vuln, displayBox);
+        root.setSpacing(50);
         Scene addVulnerability = new Scene(root, 500, 500);
+
+        updateChecksDisplay(displayBox);
 
         EventHandler<ActionEvent> addButtonEvent = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e)
             {
                 //On add vulnerability button pressed calls handleCheck method
-                handleCheck();
+                handleCheck(displayBox);
             }
         };
 
@@ -54,7 +60,7 @@ public class Checks {
         stage.setScene(addVulnerability);
     }
 
-    public void handleCheck() {
+    public void handleCheck(VBox display) {
         LinkedHashMap<String, String[]> checksMap = new LinkedHashMap<>(); // Adds all the possible types of checks
         checksMap.put("CommandContains", new String[]{"cmd", "value"});// based off of OS
         checksMap.put("CommandOutput", new String[]{"cmd", "value"});
@@ -184,6 +190,7 @@ public class Checks {
     }
 
     public void createChecks(TextField message, TextField points) {
+        ArrayList<Check> allChuncks = new ArrayList<>();
         ArrayList<String> kindList = new ArrayList<String>();
         ArrayList<String> typeList = new ArrayList<String>();
         ArrayList<Map<String, String>> checkMap = new ArrayList<>();
@@ -212,6 +219,30 @@ public class Checks {
         }
         lemonObj.addCheck(message.getText(), points.getText(), kindList, typeList, checkMap, notList);
         
+        allChuncks.addAll(checks);
+        allChecks.add(allChuncks);
+        checks = new ArrayList<>();
     }
 
-}
+    public void updateChecksDisplay(VBox display) {
+    display.getChildren().clear();
+    for (ArrayList<Check> vulnChecks : allChecks) {
+        display.getChildren().add(new Text("[[check]]"));
+        for (Check check : vulnChecks) {
+            String temp = "\t" + check.kindBox.getValue() + "\n\ttype = '" + check.typeBox.getValue();
+            if (check.notBox.isSelected()) {
+                temp += "Not";
+            } 
+            temp += "'\n";
+            ObservableList x = check.paramsBox.getChildren();
+            for (int i = 0; i < x.size(); i++) {
+                HBox paramHBox = (HBox) x.get(i);
+                Label label = (Label) paramHBox.getChildren().get(0);
+                TextField text = (TextField) paramHBox.getChildren().get(1);
+                temp += "\t" + label.getText() + " = '" + text.getText() + "'\n";
+                }
+            display.getChildren().add(new Text(temp));
+            }
+        }
+    }
+}   
