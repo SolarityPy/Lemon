@@ -249,8 +249,7 @@ public class Checks {
             EventHandler<ActionEvent> deleteButtonEvent = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e)
             {
-                //to be implemented
-                //lemonObj.removeCheck()
+                lemonObj.removeCheck(inCaseOfRemoveIndex);
                 allChecks.remove(inCaseOfRemoveIndex);
                 updateChecksDisplay(display);
             }

@@ -61,28 +61,31 @@ public class Lemon {
             System.out.println(e);
         }
     }
-
-    public int lineFinder(String path, String text, int start) {
-        int lineNumber = 1;
-        try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-            String line;
-            while (lineNumber <= start && reader.readLine() != null) {
-                lineNumber++;
-            }
-            
-            while ((line = reader.readLine()) != null) {
-                if (line.contains(text)) {
+    /* 
+    public int lineFinder(String path, int removeIndex, int start) {
+    int lineNumber = 1;
+    int currIndex = 0;
+    try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+        String line;
+        // Skip lines up to 'start'
+        while (lineNumber < start && (line = reader.readLine()) != null) {
+            lineNumber++;
+        }
+        // Now search for the removeIndex-th [[check]] after 'start'
+        while ((line = reader.readLine()) != null) {
+            lineNumber++;
+            if (line.contains("[[check]]")) {
+                if (currIndex == removeIndex) {
                     return lineNumber;
                 }
-                lineNumber++;
+                currIndex++;
             }
-            
-        } catch (IOException e) {
-            System.out.println(e);
         }
-        return -1;
+    } catch (IOException e) {
+        System.out.println(e);
     }
-    
+    return -1;
+}
     // Used GitHub Copilot
     public void removeLinesBetween(String filePath, int startLine, int endLine) {
         try {
@@ -98,11 +101,52 @@ public class Lemon {
         }
     }
 
-    public void removeCheck(String message){
-        int messageLine = lineFinder("scoring.conf", message, 1);
-        int checkLine = lineFinder("scoring.conf", "[[check]]", messageLine);
-        removeLinesBetween("scoring.conf", messageLine - 1, checkLine - 1);
-    } 
+    public void removeCheck(int removeIndex){
+        int indexLine = lineFinder("scoring.conf", removeIndex, 1);
+        int checkLine = lineFinder("scoring.conf", removeIndex, indexLine);
+        removeLinesBetween("scoring.conf", indexLine - 1, checkLine - 1);
+    } */
+
+
+    //used Copilot for removing methods can redo if wanted
+    public List<Integer> findCheckBlockStartLines(String path) {
+    List<Integer> startLines = new ArrayList<>();
+    int lineNumber = 1;
+    try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            if (line.trim().equals("[[check]]")) {
+                startLines.add(lineNumber);
+            }
+            lineNumber++;
+        }
+    } catch (IOException e) {
+        System.out.println(e);
+    }
+    return startLines;
+    }
+
+    public void removeCheck(int removeIndex) {
+    String path = "scoring.conf";
+    List<Integer> starts = findCheckBlockStartLines(path);
+    if (removeIndex < 0 || removeIndex >= starts.size()) return;
+
+    int startLine = starts.get(removeIndex);
+    int endLine = (removeIndex + 1 < starts.size()) ? starts.get(removeIndex + 1) : Integer.MAX_VALUE;
+
+    try {
+        List<String> lines = Files.readAllLines(Paths.get(path));
+        List<String> newLines = new ArrayList<>();
+        for (int i = 1; i <= lines.size(); i++) {
+            if (i < startLine || i >= endLine) {
+                newLines.add(lines.get(i - 1));
+            }
+        }
+        Files.write(Paths.get(path), newLines);
+    } catch (IOException e) {
+        System.out.println(e);
+        }
+    }
     
     @Override
     public String toString() {
