@@ -2,6 +2,8 @@ package com.lemon;
 
 import java.rmi.NotBoundException;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -123,6 +125,16 @@ public class Checks {
             @Override
             public void handle(ActionEvent e)
             {
+                for (Check check : checks) {
+                    if (check.kindBox.getValue() == null || check.typeBox.getValue() == null || check.paramsBox.getChildren().isEmpty()) {
+                        Alert alert = new Alert(AlertType.ERROR);
+                        alert.setTitle("Input Error");
+                        alert.setHeaderText(null);
+                        alert.setContentText("All fields must be filled out!");
+                        alert.showAndWait();
+                        return;
+                    }
+                }
                 createChecks(messageField, pointsField);
                 Checks.this.handle();
             }
