@@ -226,23 +226,40 @@ public class Checks {
 
     public void updateChecksDisplay(VBox display) {
     display.getChildren().clear();
-    for (ArrayList<Check> vulnChecks : allChecks) {
-        display.getChildren().add(new Text("[[check]]"));
+    for (int index = 0; index < allChecks.size(); index++) {
+        ArrayList<Check> vulnChecks = allChecks.get(index);
+        String param = "[[check]]\n";
         for (Check check : vulnChecks) {
-            String temp = "\t" + check.kindBox.getValue() + "\n\ttype = '" + check.typeBox.getValue();
+            param += "\t" + check.kindBox.getValue() + "\n\ttype = '" + check.typeBox.getValue();
             if (check.notBox.isSelected()) {
-                temp += "Not";
+                param += "Not";
             } 
-            temp += "'\n";
+            param += "'\n";
             ObservableList x = check.paramsBox.getChildren();
             for (int i = 0; i < x.size(); i++) {
                 HBox paramHBox = (HBox) x.get(i);
                 Label label = (Label) paramHBox.getChildren().get(0);
                 TextField text = (TextField) paramHBox.getChildren().get(1);
-                temp += "\t" + label.getText() + " = '" + text.getText() + "'\n";
+                param += "\t" + label.getText() + " = '" + text.getText() + "'\n";
                 }
-            display.getChildren().add(new Text(temp));
+            }    
+            Button delete = new Button("Delete");
+            HBox checkDelete = new HBox();
+            final int inCaseOfRemoveIndex = index;
+            EventHandler<ActionEvent> deleteButtonEvent = new EventHandler<ActionEvent>() {
+            public void handle(ActionEvent e)
+            {
+                //to be implemented
+                //lemonObj.removeCheck()
+                allChecks.remove(inCaseOfRemoveIndex);
+                updateChecksDisplay(display);
             }
+        };
+            delete.setOnAction(deleteButtonEvent);
+            checkDelete.getChildren().addAll(new Text(param), delete);
+            checkDelete.setSpacing(50);
+            display.getChildren().add(checkDelete);
+            
         }
     }
 }   
