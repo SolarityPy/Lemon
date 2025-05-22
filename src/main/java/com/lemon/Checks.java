@@ -38,6 +38,14 @@ public class Checks {
         this.lemonObj = lemonObj;
         this.stage = stage;
     }
+    
+    public static void throwError(String error, String message) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle(error);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
 
     public void handle() {
@@ -125,16 +133,27 @@ public class Checks {
             @Override
             public void handle(ActionEvent e)
             {
+                if (messageField.getText().equals("") || pointsField.getText().equals("")) {
+                    throwError("Missing Input", "Please fill out all fields!");
+                    return;
+                }
                 for (Check check : checks) {
-                    if (check.kindBox.getValue() == null || check.typeBox.getValue() == null || check.paramsBox.getChildren().isEmpty()) {
-                        Alert alert = new Alert(AlertType.ERROR);
-                        alert.setTitle("Input Error");
-                        alert.setHeaderText(null);
-                        alert.setContentText("All fields must be filled out!");
-                        alert.showAndWait();
+                    if (check.kindBox.getValue() == null || check.typeBox.getValue() == null) {
+                        throwError("Missing Input", "Please fill out all fields!");
                         return;
                     }
+                    for (Object child : check.paramsBox.getChildren()) {
+                        HBox hBox = (HBox) child;
+                        for (int i = 1; i < hBox.getChildren().size(); i += 2) {
+                            TextField param = (TextField) hBox.getChildren().get(i);
+                            if (param.getText().equals("")) {
+                                throwError("Missing Input", "Please fill out all fields!");
+                                return;
+                            }
+                        }
+                    }
                 }
+
                 createChecks(messageField, pointsField);
                 Checks.this.handle();
             }
@@ -273,4 +292,4 @@ public class Checks {
             
         }
     }
-}   
+}

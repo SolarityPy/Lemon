@@ -6,7 +6,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -17,7 +16,7 @@ public class Lemon {
     private Map<String, String> attributes;
     //private ArrayList<Map<String, >> checkList;
 
-    public Lemon(String title, String os, String user, String remote, String password) {
+    public Lemon(String title, String os, String user, String remote, String password, boolean opening) {
         attributes = new LinkedHashMap<>();
         attributes.put("name", title);
         attributes.put("title", title);
@@ -26,14 +25,38 @@ public class Lemon {
         attributes.put("remote", remote);
         attributes.put("password", password);
 
-        File config = new File("scoring.conf");
-        try (FileWriter writer = new FileWriter(config)) {
-                for (Map.Entry<String, String> entry : attributes.entrySet()) {
-                    writer.write(entry.getKey() + " = '" + entry.getValue() + "'\n");
-                }
-        } catch (IOException e) {
-            System.out.print(e);
+        if (!(opening)) {
+            File config = new File("scoring.conf");
+            try (FileWriter writer = new FileWriter(config)) {
+                    for (Map.Entry<String, String> entry : attributes.entrySet()) {
+                        writer.write(entry.getKey() + " = '" + entry.getValue() + "'\n");
+                    }
+            } catch (IOException e) {
+                System.out.print(e);
+            }
+        }  
+    } 
+
+    public Lemon(String title, String os, String user, boolean opening) { // Local Image Constructor
+        attributes = new LinkedHashMap<>();
+        attributes.put("name", title);
+        attributes.put("title", title);
+        attributes.put("user", user);
+        attributes.put("os", os);
+
+        if (!(opening)) {
+            File config = new File("scoring.conf");
+            try (FileWriter writer = new FileWriter(config)) {
+                    for (Map.Entry<String, String> entry : attributes.entrySet()) {
+                        writer.write(entry.getKey() + " = '" + entry.getValue() + "'\n");
+                    }
+                    writer.write("local = true\n");
+            } catch (IOException e) {
+                System.out.print(e);
+            }
         }
+
+
     }   
                     //key value    ["type": "PathExists", "path": "C:\Windows"]
     public void addCheck(String message, String points, ArrayList<String> kind, ArrayList<String> type, ArrayList<Map<String, String>> checks, ArrayList<Boolean> notList) {
@@ -61,52 +84,7 @@ public class Lemon {
             System.out.println(e);
         }
     }
-    /* 
-    public int lineFinder(String path, int removeIndex, int start) {
-    int lineNumber = 1;
-    int currIndex = 0;
-    try (BufferedReader reader = new BufferedReader(new FileReader(path))) {
-        String line;
-        // Skip lines up to 'start'
-        while (lineNumber < start && (line = reader.readLine()) != null) {
-            lineNumber++;
-        }
-        // Now search for the removeIndex-th [[check]] after 'start'
-        while ((line = reader.readLine()) != null) {
-            lineNumber++;
-            if (line.contains("[[check]]")) {
-                if (currIndex == removeIndex) {
-                    return lineNumber;
-                }
-                currIndex++;
-            }
-        }
-    } catch (IOException e) {
-        System.out.println(e);
-    }
-    return -1;
-}
-    // Used GitHub Copilot
-    public void removeLinesBetween(String filePath, int startLine, int endLine) {
-        try {
-            Path path = Paths.get(filePath); // Initilizes a new Path obj/file handle
-            List<String> lines = Files.readAllLines(path); // Reads lines and returns List of String
-
-            if (startLine > 0 && endLine <= lines.size() && startLine < endLine) {
-                lines.subList(startLine - 1, endLine - 1).clear(); // equivalent of substring for lists
-            }
-            Files.write(path, lines); // writes to file handle
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-    }
-
-    public void removeCheck(int removeIndex){
-        int indexLine = lineFinder("scoring.conf", removeIndex, 1);
-        int checkLine = lineFinder("scoring.conf", removeIndex, indexLine);
-        removeLinesBetween("scoring.conf", indexLine - 1, checkLine - 1);
-    } */
-
+    
 
     //used Copilot for removing methods can redo if wanted
     public List<Integer> findCheckBlockStartLines(String path) {
@@ -127,25 +105,25 @@ public class Lemon {
     }
 
     public void removeCheck(int removeIndex) {
-    String path = "scoring.conf";
-    List<Integer> starts = findCheckBlockStartLines(path);
-    if (removeIndex < 0 || removeIndex >= starts.size()) return;
+        String path = "scoring.conf";
+        List<Integer> starts = findCheckBlockStartLines(path);
+        if (removeIndex < 0 || removeIndex >= starts.size()) return;
 
-    int startLine = starts.get(removeIndex);
-    int endLine = (removeIndex + 1 < starts.size()) ? starts.get(removeIndex + 1) : Integer.MAX_VALUE;
+        int startLine = starts.get(removeIndex);
+        int endLine = (removeIndex + 1 < starts.size()) ? starts.get(removeIndex + 1) : Integer.MAX_VALUE;
 
-    try {
-        List<String> lines = Files.readAllLines(Paths.get(path));
-        List<String> newLines = new ArrayList<>();
-        for (int i = 1; i <= lines.size(); i++) {
-            if (i < startLine || i >= endLine) {
-                newLines.add(lines.get(i - 1));
+        try {
+            List<String> lines = Files.readAllLines(Paths.get(path));
+            List<String> newLines = new ArrayList<>();
+            for (int i = 1; i <= lines.size(); i++) {
+                if (i < startLine || i >= endLine) {
+                    newLines.add(lines.get(i - 1));
+                }
             }
-        }
-        Files.write(Paths.get(path), newLines);
-    } catch (IOException e) {
-        System.out.println(e);
-        }
+            Files.write(Paths.get(path), newLines);
+        } catch (IOException e) {
+            System.out.println(e);
+            }
     }
     
     @Override
