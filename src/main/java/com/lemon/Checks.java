@@ -1,7 +1,5 @@
 package com.lemon;
 
-import java.rmi.NotBoundException;
-
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.event.ActionEvent;
@@ -9,18 +7,14 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.text.Text;
 import javafx.scene.control.Label;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.util.LinkedHashMap;
-
 import javafx.collections.*;
-
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -33,6 +27,7 @@ public class Checks {
 
     private ArrayList<Check> checks = new ArrayList<>();
     private ArrayList<ArrayList<Check>> allChecks = new ArrayList<>();
+    private ArrayList<LinkedHashMap<String, Object>> allChecksString = new ArrayList<>();
 
     public Checks(Lemon lemonObj, Stage stage) {
         this.lemonObj = lemonObj;
@@ -47,7 +42,6 @@ public class Checks {
         alert.showAndWait();
     }
 
-
     public void handle() {
         Button addVuln = new Button("Add Vulnerability");
         VBox vuln = new VBox(addVuln);
@@ -55,8 +49,6 @@ public class Checks {
         HBox root = new HBox(vuln, displayBox);
         root.setSpacing(50);
         Scene addVulnerability = new Scene(root, 500, 500);
-
-        updateChecksDisplay(displayBox);
 
         EventHandler<ActionEvent> addButtonEvent = new EventHandler<ActionEvent>() {
             public void handle(ActionEvent e)
@@ -221,7 +213,7 @@ public class Checks {
     }
 
     public void createChecks(TextField message, TextField points) {
-        ArrayList<Check> allChuncks = new ArrayList<>();
+        ArrayList<Check> allChunks = new ArrayList<>();
         ArrayList<String> kindList = new ArrayList<String>();
         ArrayList<String> typeList = new ArrayList<String>();
         ArrayList<Map<String, String>> checkMap = new ArrayList<>();
@@ -250,46 +242,10 @@ public class Checks {
         }
         lemonObj.addCheck(message.getText(), points.getText(), kindList, typeList, checkMap, notList);
         
-        allChuncks.addAll(checks);
-        allChecks.add(allChuncks);
+        allChunks.addAll(checks);
+
+        allChecks.add(allChunks);
         checks = new ArrayList<>();
     }
 
-    public void updateChecksDisplay(VBox display) {
-    display.getChildren().clear();
-    for (int index = 0; index < allChecks.size(); index++) {
-        ArrayList<Check> vulnChecks = allChecks.get(index);
-        String param = "[[check]]\n";
-        for (Check check : vulnChecks) {
-            param += "\t" + check.kindBox.getValue() + "\n\ttype = '" + check.typeBox.getValue();
-            if (check.notBox.isSelected()) {
-                param += "Not";
-            } 
-            param += "'\n";
-            ObservableList x = check.paramsBox.getChildren();
-            for (int i = 0; i < x.size(); i++) {
-                HBox paramHBox = (HBox) x.get(i);
-                Label label = (Label) paramHBox.getChildren().get(0);
-                TextField text = (TextField) paramHBox.getChildren().get(1);
-                param += "\t" + label.getText() + " = '" + text.getText() + "'\n";
-                }
-            }    
-            Button delete = new Button("Delete");
-            HBox checkDelete = new HBox();
-            final int inCaseOfRemoveIndex = index;
-            EventHandler<ActionEvent> deleteButtonEvent = new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent e)
-            {
-                lemonObj.removeCheck(inCaseOfRemoveIndex);
-                allChecks.remove(inCaseOfRemoveIndex);
-                updateChecksDisplay(display);
-            }
-        };
-            delete.setOnAction(deleteButtonEvent);
-            checkDelete.getChildren().addAll(new Text(param), delete);
-            checkDelete.setSpacing(50);
-            display.getChildren().add(checkDelete);
-            
-        }
-    }
 }
