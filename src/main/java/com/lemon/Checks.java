@@ -16,11 +16,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import com.moandjiezana.toml.Toml;
+import java.io.File;
 
 import java.util.LinkedHashMap;
 
 import javafx.collections.*;
-
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -38,6 +40,14 @@ public class Checks {
         this.lemonObj = lemonObj;
         this.stage = stage;
     }
+    
+    public static void throwError(String error, String message) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle(error);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
 
     public void handle() {
@@ -48,6 +58,7 @@ public class Checks {
         root.setSpacing(50);
         Scene addVulnerability = new Scene(root, 500, 500);
 
+        this.loadChecksFromConfig("scoring.conf");
         updateChecksDisplay(displayBox);
 
         EventHandler<ActionEvent> addButtonEvent = new EventHandler<ActionEvent>() {
@@ -125,16 +136,27 @@ public class Checks {
             @Override
             public void handle(ActionEvent e)
             {
+                if (messageField.getText().equals("") || pointsField.getText().equals("")) {
+                    throwError("Missing Input", "Please fill out all fields!");
+                    return;
+                }
                 for (Check check : checks) {
-                    if (check.kindBox.getValue() == null || check.typeBox.getValue() == null || check.paramsBox.getChildren().isEmpty()) {
-                        Alert alert = new Alert(AlertType.ERROR);
-                        alert.setTitle("Input Error");
-                        alert.setHeaderText(null);
-                        alert.setContentText("All fields must be filled out!");
-                        alert.showAndWait();
+                    if (check.kindBox.getValue() == null || check.typeBox.getValue() == null) {
+                        throwError("Missing Input", "Please fill out all fields!");
                         return;
                     }
+                    for (Object child : check.paramsBox.getChildren()) {
+                        HBox hBox = (HBox) child;
+                        for (int i = 1; i < hBox.getChildren().size(); i += 2) {
+                            TextField param = (TextField) hBox.getChildren().get(i);
+                            if (param.getText().equals("")) {
+                                throwError("Missing Input", "Please fill out all fields!");
+                                return;
+                            }
+                        }
+                    }
                 }
+
                 createChecks(messageField, pointsField);
                 Checks.this.handle();
             }
@@ -236,7 +258,7 @@ public class Checks {
         checks = new ArrayList<>();
     }
 
-    public void updateChecksDisplay(VBox display) {
+public void updateChecksDisplay(VBox display) {
     display.getChildren().clear();
     for (int index = 0; index < allChecks.size(); index++) {
         ArrayList<Check> vulnChecks = allChecks.get(index);
@@ -273,4 +295,54 @@ public class Checks {
             
         }
     }
-}   
+        public void loadChecksFromConfig(String configPath) {
+            try {
+                Toml toml = new Toml().read(new File(configPath));
+                List<Toml> checks = toml.getTables("check");
+                allChecks.clear();
+                for (Toml check : checks) {
+                    ArrayList<Check> group = new ArrayList<>();
+                    for (String kind : new String[]{"pass", "fail", "passoverride"}) {
+                        List<Toml> subChecks = check.getTables(kind);
+                        if (subChecks == null) continue; 
+                        for (Toml subCheck : subChecks) {
+                            ComboBox<String> kindBox = new ComboBox<>();
+                            kindBox.getItems().addAll("[[check.pass]]", "[[check.fail]]", "[[check.passoverride]]");
+                            kindBox.setValue("[[check." + kind + "]]");
+
+                            ComboBox<String> typeBox = new ComboBox<>();
+                            String typeValue = subCheck.getString("type");
+                            if (typeValue != null) {
+                                typeBox.getItems().add(typeValue.replace("Not", ""));
+                                typeBox.setValue(typeValue.replace("Not", ""));
+                            } else {
+                                typeBox.setValue("");
+                            }
+
+                            CheckBox notBox = new CheckBox("Not");
+                            if (typeValue != null && typeValue.endsWith("Not")) {
+                                notBox.setSelected(true);
+                            }
+
+                            VBox paramsBox = new VBox();
+                            for (String key : subCheck.toMap().keySet()) {
+                                if (!key.equals("type")) {
+                                    Label label = new Label(key + ":");
+                                    TextField textField = new TextField(subCheck.getString(key));
+                                    HBox hBox = new HBox(label, textField);
+                                    hBox.setSpacing(10);
+                                    paramsBox.getChildren().add(hBox);
+                                }
+                            }
+
+                            Check checkObj = new Check(kindBox, typeBox, notBox, paramsBox);
+                            group.add(checkObj);
+                        }
+}
+                    allChecks.add(group);
+                }
+            } catch (Exception e) {
+                Checks.throwError("Error", e.toString());
+            }
+        }
+    }
