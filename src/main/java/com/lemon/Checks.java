@@ -1,7 +1,5 @@
 package com.lemon;
 
-import java.rmi.NotBoundException;
-
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.event.ActionEvent;
@@ -9,10 +7,10 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.text.Text;
 import javafx.scene.control.Label;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -20,7 +18,6 @@ import com.moandjiezana.toml.Toml;
 import java.io.File;
 
 import java.util.LinkedHashMap;
-
 import javafx.collections.*;
 import java.util.List;
 import java.util.ArrayList;
@@ -35,6 +32,7 @@ public class Checks {
 
     private ArrayList<Check> checks = new ArrayList<>();
     private ArrayList<ArrayList<Check>> allChecks = new ArrayList<>();
+    private ArrayList<LinkedHashMap<String, Object>> allChecksString = new ArrayList<>();
 
     public Checks(Lemon lemonObj, Stage stage) {
         this.lemonObj = lemonObj;
@@ -48,7 +46,6 @@ public class Checks {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
 
     public void handle() {
         Button addVuln = new Button("Add Vulnerability");
@@ -224,7 +221,7 @@ public class Checks {
     }
 
     public void createChecks(TextField message, TextField points) {
-        ArrayList<Check> allChuncks = new ArrayList<>();
+        ArrayList<Check> allChunks = new ArrayList<>();
         ArrayList<String> kindList = new ArrayList<String>();
         ArrayList<String> typeList = new ArrayList<String>();
         ArrayList<Map<String, String>> checkMap = new ArrayList<>();
@@ -253,8 +250,9 @@ public class Checks {
         }
         lemonObj.addCheck(message.getText(), points.getText(), kindList, typeList, checkMap, notList);
         
-        allChuncks.addAll(checks);
-        allChecks.add(allChuncks);
+        allChunks.addAll(checks);
+
+        allChecks.add(allChunks);
         checks = new ArrayList<>();
     }
 
