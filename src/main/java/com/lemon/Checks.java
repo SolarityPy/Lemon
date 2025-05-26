@@ -10,6 +10,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -32,7 +33,7 @@ public class Checks {
 
     private ArrayList<Check> checks = new ArrayList<>();
     private ArrayList<ArrayList<Check>> allChecks = new ArrayList<>();
-    private ArrayList<LinkedHashMap<String, Object>> allChecksString = new ArrayList<>();
+
 
     public Checks(Lemon lemonObj, Stage stage) {
         this.lemonObj = lemonObj;
@@ -51,7 +52,13 @@ public class Checks {
         Button addVuln = new Button("Add Vulnerability");
         VBox vuln = new VBox(addVuln);
         VBox displayBox = new VBox();
-        HBox root = new HBox(vuln, displayBox);
+
+        // Add a ScrollPane for vertical scrolling
+        ScrollPane displayPane = new ScrollPane(displayBox);
+        displayPane.setFitToWidth(true); // Optional: makes the scroll pane fit the width of the content
+        displayPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Always show vertical scroll bar
+
+        HBox root = new HBox(vuln, displayPane);
         root.setSpacing(50);
         Scene addVulnerability = new Scene(root, 500, 500);
 
@@ -135,11 +142,13 @@ public class Checks {
             {
                 if (messageField.getText().equals("") || pointsField.getText().equals("")) {
                     throwError("Missing Input", "Please fill out all fields!");
+                    System.out.println("Missing message or points");
                     return;
                 }
                 for (Check check : checks) {
                     if (check.kindBox.getValue() == null || check.typeBox.getValue() == null) {
                         throwError("Missing Input", "Please fill out all fields!");
+                        System.out.println("boxes");
                         return;
                     }
                     for (Object child : check.paramsBox.getChildren()) {
@@ -147,6 +156,7 @@ public class Checks {
                         for (int i = 1; i < hBox.getChildren().size(); i += 2) {
                             TextField param = (TextField) hBox.getChildren().get(i);
                             if (param.getText().equals("")) {
+                                System.out.print("params");
                                 throwError("Missing Input", "Please fill out all fields!");
                                 return;
                             }
@@ -294,9 +304,12 @@ public void updateChecksDisplay(VBox display) {
         }
     }
         public void loadChecksFromConfig(String configPath) {
-            try {
+            //try {
                 Toml toml = new Toml().read(new File(configPath));
                 List<Toml> checks = toml.getTables("check");
+                if (checks == null) {
+                    return;
+                }
                 allChecks.clear();
                 for (Toml check : checks) {
                     ArrayList<Check> group = new ArrayList<>();
@@ -339,8 +352,8 @@ public void updateChecksDisplay(VBox display) {
 }
                     allChecks.add(group);
                 }
-            } catch (Exception e) {
-                Checks.throwError("Error", e.toString());
-            }
+            //} catch (Exception e) {
+            //    Checks.throwError("Error", e.toString());
+            //}
         }
     }
