@@ -15,14 +15,20 @@ import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 import com.moandjiezana.toml.Toml;
+
 import java.io.File;
 
 import java.util.LinkedHashMap;
+
 import javafx.collections.*;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+
+import javafx.scene.layout.Priority;
 
 public class Checks {
     private Lemon lemonObj;
@@ -38,6 +44,15 @@ public class Checks {
     public Checks(Lemon lemonObj, Stage stage) {
         this.lemonObj = lemonObj;
         this.stage = stage;
+    }
+
+    public static boolean isInteger(String s) {
+        try {
+            Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
     
     public static void throwError(String error, String message) {
@@ -57,7 +72,7 @@ public class Checks {
         ScrollPane displayPane = new ScrollPane(displayBox);
         displayPane.setFitToWidth(true); // Optional: makes the scroll pane fit the width of the content
         displayPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS); // Always show vertical scroll bar
-
+        HBox.setHgrow(displayPane, Priority.ALWAYS);
         HBox root = new HBox(vuln, displayPane);
         root.setSpacing(50);
         Scene addVulnerability = new Scene(root, 500, 500);
@@ -142,13 +157,15 @@ public class Checks {
             {
                 if (messageField.getText().equals("") || pointsField.getText().equals("")) {
                     throwError("Missing Input", "Please fill out all fields!");
-                    System.out.println("Missing message or points");
+                    return;
+                }
+                if (!(isInteger(pointsField.getText()))) {
+                    throwError("Invalid Input", "Points must be a number!");
                     return;
                 }
                 for (Check check : checks) {
                     if (check.kindBox.getValue() == null || check.typeBox.getValue() == null) {
                         throwError("Missing Input", "Please fill out all fields!");
-                        System.out.println("boxes");
                         return;
                     }
                     for (Object child : check.paramsBox.getChildren()) {
@@ -156,7 +173,6 @@ public class Checks {
                         for (int i = 1; i < hBox.getChildren().size(); i += 2) {
                             TextField param = (TextField) hBox.getChildren().get(i);
                             if (param.getText().equals("")) {
-                                System.out.print("params");
                                 throwError("Missing Input", "Please fill out all fields!");
                                 return;
                             }
@@ -270,9 +286,9 @@ public void updateChecksDisplay(VBox display) {
     display.getChildren().clear();
     for (int index = 0; index < allChecks.size(); index++) {
         ArrayList<Check> vulnChecks = allChecks.get(index);
-        String param = "[[check]]\n";
+        String param = "Check #" + (index + 1);
         for (Check check : vulnChecks) {
-            param += "\t" + check.kindBox.getValue() + "\n\ttype = '" + check.typeBox.getValue();
+            param += "\t\n" + check.kindBox.getValue() + "\n\ttype = '" + check.typeBox.getValue();
             if (check.notBox.isSelected()) {
                 param += "Not";
             } 

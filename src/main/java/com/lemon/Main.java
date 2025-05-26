@@ -3,6 +3,7 @@ package com.lemon;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -10,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -24,16 +26,20 @@ public class Main extends Application {
             open.readConfig(primaryStage);
         };
         
+        Text title = new Text("Welcome to Lemon!");
         Button createButton = new Button("Create New Config");
         Button openButton = new Button("Open Existing Config");
 
         createButton.setOnAction(createButtonEvent);
         openButton.setOnAction(openButtonEvent);
 
-        VBox vbox = new VBox(10);
-        vbox.getChildren().addAll(createButton, openButton);
+        VBox vbox = new VBox(20);
+        vbox.getChildren().addAll(title, createButton, openButton);
+        vbox.setAlignment(Pos.CENTER);
+        StackPane root = new StackPane(vbox);
+        StackPane.setAlignment(vbox, Pos.CENTER);
 
-        Scene sc = new Scene(vbox, 200, 200);
+        Scene sc = new Scene(root, 200, 150);
 
         primaryStage.setScene(sc);
         primaryStage.setTitle("Lemon"); 
@@ -47,30 +53,45 @@ public class Main extends Application {
         HBox hbTitle = new HBox();
         hbTitle.getChildren().addAll(title, imageTextField);
         hbTitle.setSpacing(10);
+        hbTitle.setAlignment(Pos.CENTER);
+        StackPane rootTitle = new StackPane(hbTitle);
+        StackPane.setAlignment(hbTitle, Pos.CENTER);
 
         Label os = new Label("OS Name:");
         TextField osTextField = new TextField();
         HBox hbOs = new HBox();
         hbOs.getChildren().addAll(os, osTextField);
         hbOs.setSpacing(10);
+        hbOs.setAlignment(Pos.CENTER);
+        StackPane rootOs = new StackPane(hbOs);
+        StackPane.setAlignment(hbOs, Pos.CENTER);
 
         Label user = new Label("Signed-in User:");
         TextField userTextField = new TextField();
         HBox hbUser = new HBox();
         hbUser.getChildren().addAll(user, userTextField);
         hbUser.setSpacing(10);   
+        hbUser.setAlignment(Pos.CENTER);
+        StackPane rootUser = new StackPane(hbUser);
+        StackPane.setAlignment(hbUser, Pos.CENTER);
         
         Label remote = new Label("Remote:");
         TextField remoteTextField = new TextField();
         HBox hbRemote = new HBox();
         hbRemote.getChildren().addAll(remote, remoteTextField);
         hbRemote.setSpacing(10);  
+        hbRemote.setAlignment(Pos.CENTER);
+        StackPane rootRemote = new StackPane(hbRemote);
+        StackPane.setAlignment(hbRemote, Pos.CENTER);
 
         Label password = new Label("Remote Password");
         TextField passwordTextField = new TextField();
         HBox hbPassword = new HBox();
         hbPassword.getChildren().addAll(password, passwordTextField);
         hbPassword.setSpacing(10); 
+        hbPassword.setAlignment(Pos.CENTER);
+        StackPane rootPassword = new StackPane(hbPassword);
+        StackPane.setAlignment(hbPassword, Pos.CENTER);
 
         Button doneButton = new Button("Done");
         EventHandler<ActionEvent> doneButtonEvent = (ActionEvent e) -> {
@@ -105,9 +126,12 @@ public class Main extends Application {
         VBox vbox = new VBox(15);
         //displays text boxes
         Text text = new Text("Leave remote or password blank for local scoring");
-        vbox.getChildren().addAll(hbTitle, hbOs, hbUser, text, hbRemote, hbPassword, doneButton);
+        vbox.getChildren().addAll(rootTitle, rootOs, rootUser, text, rootRemote, rootPassword, doneButton);
+        vbox.setAlignment(Pos.CENTER);
+        StackPane root = new StackPane(vbox);
+        StackPane.setAlignment(vbox, Pos.CENTER);
 
-        Scene createWindow = new Scene(vbox, 300, 300);
+        Scene createWindow = new Scene(root, 300, 300);
         stage.setScene(createWindow);
 
     }
