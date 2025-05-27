@@ -40,6 +40,7 @@ public class Main extends Application {
         StackPane.setAlignment(vbox, Pos.CENTER);
 
         Scene sc = new Scene(root, 200, 150);
+        sc.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
 
         primaryStage.setScene(sc);
         primaryStage.setTitle("Lemon"); 
@@ -132,6 +133,7 @@ public class Main extends Application {
         StackPane.setAlignment(vbox, Pos.CENTER);
 
         Scene createWindow = new Scene(root, 300, 300);
+        createWindow.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
         stage.setScene(createWindow);
 
     }
