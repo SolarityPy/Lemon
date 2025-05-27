@@ -27,6 +27,7 @@ public class Main extends Application {
         };
         
         Text title = new Text("Welcome to Lemon!");
+        title.getStyleClass().add("text");
         Button createButton = new Button("Create New Config");
         Button openButton = new Button("Open Existing Config");
 
@@ -127,6 +128,7 @@ public class Main extends Application {
         VBox vbox = new VBox(15);
         //displays text boxes
         Text text = new Text("Leave remote or password blank for local scoring");
+        text.getStyleClass().add("text");
         vbox.getChildren().addAll(rootTitle, rootOs, rootUser, text, rootRemote, rootPassword, doneButton);
         vbox.setAlignment(Pos.CENTER);
         StackPane root = new StackPane(vbox);

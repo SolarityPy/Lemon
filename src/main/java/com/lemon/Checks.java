@@ -76,6 +76,7 @@ public class Checks {
         HBox root = new HBox(vuln, displayPane);
         root.setSpacing(50);
         Scene addVulnerability = new Scene(root, 500, 500);
+        addVulnerability.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
 
         this.loadChecksFromConfig("scoring.conf");
         updateChecksDisplay(displayBox);
@@ -201,6 +202,7 @@ public class Checks {
         VBox parent = new VBox(done, hbMessage, hbPoints, child, add);
         parent.setSpacing(10);
         Scene sc = new Scene(parent, 500, 500);
+        sc.getStylesheets().add(getClass().getResource("/styles.css").toExternalForm());
         stage.setScene(sc);
     } 
 
@@ -313,7 +315,9 @@ public void updateChecksDisplay(VBox display) {
             }
         };
             delete.setOnAction(deleteButtonEvent);
-            checkDelete.getChildren().addAll(new Text(param), delete);
+            Text paramsText = new Text(param);
+            paramsText.getStyleClass().add("text");
+            checkDelete.getChildren().addAll(paramsText, delete);
             checkDelete.setSpacing(50);
             display.getChildren().add(checkDelete);
             
