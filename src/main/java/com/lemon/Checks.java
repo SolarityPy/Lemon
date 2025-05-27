@@ -16,18 +16,24 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+
 import com.moandjiezana.toml.Toml;
+
 
 import java.io.File;
 
 import java.util.LinkedHashMap;
 
+
 import javafx.collections.*;
+
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+
+import javafx.scene.layout.Priority;
 
 import javafx.scene.layout.Priority;
 
